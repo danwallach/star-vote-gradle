@@ -1,0 +1,53 @@
+group 'edu.rice.starvote'
+version '1.0'
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile fileTree(dir: 'lib', include: '*.jar')
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+task runSupervisor(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    main = "supervisor.Supervisor"
+    jvmArgs [ "-Djava.net.preferIPv4Stack=true" ]
+    args "0"
+}
+
+task runVotebox1(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    main = "votebox.VoteBox"
+    jvmArgs [ "-Djava.net.preferIPv4Stack=true" ]
+    args "1"
+}
+
+task runVotebox2(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    main = "votebox.VoteBox"
+    jvmArgs [ "-Djava.net.preferIPv4Stack=true" ]
+    args "2"
+}
+
+task runBallotScanner(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    main = "ballotscanner.BallotScanner"
+    jvmArgs [ "-Djava.net.preferIPv4Stack=true" ]
+    args "3"
+}
+
+/* Don't use; does not work */
+task runTap(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    main = "tap.Tap"
+    jvmArgs [ "-Djava.net.preferIPv4Stack=true" ]
+    args "4"
+}
