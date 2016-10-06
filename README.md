@@ -24,8 +24,11 @@ The following Gradle tasks have been added to run the various components of
 STAR-Vote:
 
 `runSupervisor`: Run the Supervisor application with serial number 0.
+
 `runVotebox1`: Run the Votebox application with serial number 1.
+
 `runVotebox2`: Run the Votebox application with serial number 2.
+
 `runBallotScanner`: Run the legacy ballot scanner application with serial
 number 3.
 
