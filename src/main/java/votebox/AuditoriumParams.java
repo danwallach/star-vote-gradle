@@ -47,12 +47,12 @@ public class AuditoriumParams implements IAuditoriumParams,
 
     public static final AuditoriumParams Singleton = new AuditoriumParams();
 
-    public static final int DISCOVER_TIMEOUT = 4000;
+    public static final int DISCOVER_TIMEOUT = 8000;
     public static int DISCOVER_PORT = 9782;
-    public static final int DISCOVER_REPLY_TIMEOUT = 4000;
+    public static final int DISCOVER_REPLY_TIMEOUT = 8000;
     public static final int DISCOVER_REPLY_PORT = 9783;
     public static final int LISTEN_PORT = 9700;
-    public static final int JOIN_TIMEOUT = 1000;
+    public static final int JOIN_TIMEOUT = 2000;
     public static final String BROADCAST_ADDRESS = "255.255.255.255";
     public static final String LOG_LOCATION = "log/log.out";
     public static final String KEYS_DIRECTORY = "keys/";
