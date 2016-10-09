@@ -42,8 +42,8 @@ import java.net.URL;
  */
 public class GlobalVarsReader {
 
-    private final URL BallotSchema  = getClass().getResource("/votebox/middle/schema/ballot_schema.xsd");
-    private final URL LayoutSchema  = getClass().getResource("/votebox/middle/schema/layout_schema.xsd");
+    private final URL BallotSchema  = getClass().getResource("/schema/ballot_schema.xsd");
+    private final URL LayoutSchema  = getClass().getResource("/schema/layout_schema.xsd");
     private final String Filename   = "ballotbox.cfg";
 
     private String _rootPath;
@@ -82,7 +82,6 @@ public class GlobalVarsReader {
             public String getLayoutFile() { return _rootPath + layoutstring; }
             public URL  getLayoutSchema() { return LayoutSchema; }
             public URL  getBallotSchema() { return BallotSchema; }
-
         };
     }
 }
