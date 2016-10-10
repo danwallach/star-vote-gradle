@@ -455,35 +455,39 @@ public class Tap {
             System.out.println(reportAddr + port);
             InetSocketAddress addr = new InetSocketAddress(reportAddr, port);
 
+            //TODO: Commented this part out for testing purpose
             /* Loop until an exception or tap is started */
-            while (true) {
+           // while (true) {
 
-                try {
+                //try {
 
                     /* Try to establish a socket connection */
-                    Socket localCon = new Socket();
-                    localCon.connect(addr);
+                    //Socket localCon = new Socket();
+                    Socket localCon = null;
+                    //localCon.connect(addr);
 
                     /* Start the tap */
-                    (new Tap(serial, localCon.getOutputStream(), launchCode, params)).start();
+                    (new Tap(serial, null, launchCode, params)).start();
                     System.out.println("Connection successful to " + addr);
-                    break;
-                }
-                catch (IOException e) { /* If no good, retry */
+                  //  break;
+              //  }
+            /**
+            catch (IOException e) {
                     System.out.println("Connection failed: " + e.getMessage());
                     System.out.println("Retry in 5 seconds...");
                     Thread.sleep(5000);
                 }
-            }
+                */
+           // }
         }
         catch (NumberFormatException e) {
             throw new RuntimeException("usage: Tap [serial] [report address] [port]; where port is between 1 and 65535 & [serial] is a positive integer", e);
         }
-        catch (InterruptedException e) { throw new RuntimeException(e); }
+        //catch (InterruptedException e) { throw new RuntimeException(e); }
 
         /* TEST CODE */
 
-        testMethod();
+//        testMethod();
 
         /* END TEST CODE */
 
