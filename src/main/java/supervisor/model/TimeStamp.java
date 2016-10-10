@@ -1,10 +1,12 @@
 package supervisor.model;
 
+import java.io.Serializable;
+
 /**
  * Keeps track of how long anything been issued and expires if it is older than
  * lifeTimeInSeconds
  */
-class TimeStamp {
+class TimeStamp implements Serializable {
 
 
     /** The time that this PIN came into the world */
