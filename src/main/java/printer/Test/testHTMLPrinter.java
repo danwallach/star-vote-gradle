@@ -15,7 +15,7 @@ public class testHTMLPrinter {
 
     public static void main(String args[])throws IOException{
 
-        AuditoriumParams params = new AuditoriumParams("");
+        AuditoriumParams params = new AuditoriumParams("vb.conf");
         List<ArrayList<String>> outerList = new ArrayList<>();
         ArrayList<String> innerList = new ArrayList<>();
 
@@ -23,10 +23,10 @@ public class testHTMLPrinter {
         innerList.add("bigst.png");
         outerList.add(innerList);
 
-        HTMLPrinter.generateHTMLFile("printer/test.html", false, "/Users/arghyac/Dropbox/RiceUniversity/STAR-Vote/printer/Test/imageHTMLP/", params,
+        HTMLPrinter.generateHTMLFile("printer/test.html", false, "/Users/Alex/rice/comp435/star-vote-gradle/src/main/java/printer/Test/imageHTMLP/", params,
                 outerList);
 
-        HTMLPrinter.generateHTMLFile("printer/test2.html", true, "/Users/arghyac/Dropbox/RiceUniversity/STAR-Vote/printer/Test/imageHTMLP/", params,
+        HTMLPrinter.generateHTMLFile("printer/test2.html", true, "/Users/Alex/rice/comp435/star-vote-gradle/src/main/java/printer/Test/imageHTMLP/", params,
                 outerList);
     }
 

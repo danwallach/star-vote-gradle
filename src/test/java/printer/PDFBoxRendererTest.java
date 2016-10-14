@@ -40,6 +40,14 @@ public class PDFBoxRendererTest {
         contents.endText();
       }
 
+      for (int i = 0; i < 66; i++) {
+        contents.beginText();
+        contents.setFont(font, 12);
+        contents.newLineAtOffset(350, 725-10*i);
+        contents.showText("###");
+        contents.endText();
+      }
+
       contents.close();
 
       document.save(file);
