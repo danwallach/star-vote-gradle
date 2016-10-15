@@ -198,10 +198,14 @@ public class Tap {
 
             public void commitBallot(CommitBallotEvent e) {
 			    /* TODO? BallotStore.addPrecinct(e.getBID().toString(), e.getRaceSelections()); */
+			    System.out.println("Commit Ballot!");
+                System.out.println(e.getBID());
+                System.out.println(e.getBallot());
             }
 
             public void ballotReceived(BallotReceivedEvent e){
                 /* TODO? BallotStore.mapPrecinct(e.getBID(), e.getPrecinct()); */
+                System.out.println("received ballot " + e.getBID());
             }
 
             /* Ignored events */
@@ -226,8 +230,14 @@ public class Tap {
             public void tapMachine(TapMachineEvent tapMachineEvent) {}
             public void pollStatus(PollStatusEvent pollStatusEvent) {}
             public void overrideCancelDeny(OverrideCancelDenyEvent e) {}
-            public void spoilBallot(SpoilBallotEvent spoilBallotEvent) {}
-            public void castCommittedBallot(CastCommittedBallotEvent e) {}
+            public void spoilBallot(SpoilBallotEvent spoilBallotEvent) {
+                // TODO: Does not print out spoil ballot event.
+                System.out.println("Ballot spoiled!!!");
+
+            }
+            public void castCommittedBallot(CastCommittedBallotEvent e) {
+                System.out.println("Cast Committed Ballot!!!");
+            }
             public void overrideCommitConfirm(OverrideCommitConfirmEvent e) {}
             public void scannerStart(StartScannerEvent startScannerEvent) {}
             public void overrideCancelConfirm(OverrideCancelConfirmEvent e) {}
@@ -327,6 +337,8 @@ public class Tap {
 
         /* Execute upload*/
         uploadToServer();
+        // reset upload to false so we can try upload the ballots again.
+        uploading = false;
     }
 
     private static void testMethod() {
