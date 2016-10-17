@@ -182,7 +182,9 @@ public class Tap {
                     BallotScanAcceptedEvent.getMatcher(),
                     PollsClosedEvent.getMatcher(),
                     StartUploadEvent.getMatcher(),
-                    BallotUploadEvent.getMatcher()
+                    BallotUploadEvent.getMatcher(),
+                    SpoilBallotEvent.getMatcher(), //ADDED THIS TO LISTEN TO THIS EVENT
+                    CastCommittedBallotEvent.getMatcher() //ADDED THIS TO LISTEN TO THIS EVENT
             );
 
         }
@@ -226,8 +228,12 @@ public class Tap {
             public void tapMachine(TapMachineEvent tapMachineEvent) {}
             public void pollStatus(PollStatusEvent pollStatusEvent) {}
             public void overrideCancelDeny(OverrideCancelDenyEvent e) {}
-            public void spoilBallot(SpoilBallotEvent spoilBallotEvent) {}
-            public void castCommittedBallot(CastCommittedBallotEvent e) {}
+            public void spoilBallot(SpoilBallotEvent spoilBallotEvent) {
+                uploadSpoiledBallot(spoilBallotEvent);
+            }
+            public void castCommittedBallot(CastCommittedBallotEvent e) {
+                uploadCastBallot(e);
+            }
             public void overrideCommitConfirm(OverrideCommitConfirmEvent e) {}
             public void scannerStart(StartScannerEvent startScannerEvent) {}
             public void overrideCancelConfirm(OverrideCancelConfirmEvent e) {}
@@ -242,6 +248,14 @@ public class Tap {
             public void startUpload(StartUploadEvent startUploadEvent) {
                 System.out.println("Supervisor started upload...");
                 uploadPending.add(startUploadEvent.getSerial());
+            }
+
+            public void uploadCastBallot(CastCommittedBallotEvent e){
+                System.out.println("commited ballot cast!");
+            }
+
+            public void uploadSpoiledBallot(SpoilBallotEvent spoilBallotEvent){
+                System.out.println("ballot spoiled");
             }
 
             @Override
