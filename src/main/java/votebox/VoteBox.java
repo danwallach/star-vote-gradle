@@ -260,6 +260,8 @@ public class VoteBox{
 
                 Ballot<PlaintextRaceSelection> ballot = new Ballot<>(bid, ballotForm, nonce.toString());
 
+                // TODO this is where we will split the ballot into multiple ballots, print them, and announce them
+
                 /* Encrypt Ballot */
                 Ballot<EncryptedRaceSelection<ExponentialElGamalCiphertext>> encBallot;
 
