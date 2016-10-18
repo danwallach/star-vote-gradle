@@ -182,7 +182,9 @@ public class Tap {
                     BallotScanAcceptedEvent.getMatcher(),
                     PollsClosedEvent.getMatcher(),
                     StartUploadEvent.getMatcher(),
-                    BallotUploadEvent.getMatcher()
+                    BallotUploadEvent.getMatcher(),
+                    SpoilBallotEvent.getMatcher(), // so we respond to spoil ballot event
+                    CastCommittedBallotEvent.getMatcher() // and cast commit ballot event.
             );
 
         }
@@ -194,6 +196,8 @@ public class Tap {
 
             public void ballotAccepted(BallotScanAcceptedEvent e){
                 /* TODO? BallotStore.castCommittedBallot(e.getBID().toString()); */
+                System.out.println("Got scanned ballot!");
+                System.out.println(e.getBID());
             }
 
             public void commitBallot(CommitBallotEvent e) {
@@ -233,6 +237,7 @@ public class Tap {
             public void spoilBallot(SpoilBallotEvent spoilBallotEvent) {
                 // TODO: Does not print out spoil ballot event.
                 System.out.println("Ballot spoiled!!!");
+                System.out.println(spoilBallotEvent.getBID());
 
             }
             public void castCommittedBallot(CastCommittedBallotEvent e) {

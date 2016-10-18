@@ -247,6 +247,24 @@ public class Precinct<T extends AHomomorphicCiphertext<T>> implements Serializab
         return ballotList;
     }
 
+    /**
+     * Similar to getChallengedBallots() Construct and return a list of casted ballots as
+     * List expressions.
+     *
+     * @return the list of casted Ballots as a ListExpression of
+     *                  ListExpressions
+     */
+    public List<Ballot<EncryptedRaceSelection<T>>> getCastedBallots(){
+
+        List<Ballot<EncryptedRaceSelection<T>>> ballotList = new ArrayList<>();
+
+        /* Add each challenged ballot to the List */
+        ballotList.addAll(cast.stream().collect(Collectors.toList()));
+
+        /* Construct a ListExpression from the List and return */
+        return ballotList;
+    }
+
     public String getPrecinctID(){
         return precinctID;
     }
