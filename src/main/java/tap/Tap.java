@@ -111,6 +111,58 @@ public class Tap {
     }
 
     /**
+     * Uploads a spoiled ballot id to the server
+     */
+    public void uploadSpoiledBallot(SpoilBallotEvent spoilBallotEvent){
+        HttpClient client = new DefaultHttpClient();
+
+        String spoilballoturl = "spoil";
+
+        HttpPost post = new HttpPost("http://localhost:9000/" + spoilballoturl);
+
+        try {
+
+            List<BasicNameValuePair> bnvp = new ArrayList<>();
+
+            bnvp.add(new BasicNameValuePair("spoiledBID", spoilBallotEvent.getBID()));
+
+            post.setEntity(new UrlEncodedFormEntity(bnvp));
+
+            client.execute(post);
+
+        } catch (IOException e) { e.printStackTrace(); }
+
+        System.out.println("spoil ballot upload complete");
+
+    }
+
+    /**
+     * Uploads a spoiled ballot id to the server
+     */
+    public void uploadCastBallot(BallotScanAcceptedEvent ballotScanAcceptedEvent){
+        HttpClient client = new DefaultHttpClient();
+
+        String castballoturl = "cast";
+
+        HttpPost post = new HttpPost("http://localhost:9000/" + castballoturl);
+
+        try {
+
+            List<BasicNameValuePair> bnvp = new ArrayList<>();
+
+            bnvp.add(new BasicNameValuePair("castBID", ballotScanAcceptedEvent.getBID()));
+
+            post.setEntity(new UrlEncodedFormEntity(bnvp));
+
+            client.execute(post);
+
+        } catch (IOException e) { e.printStackTrace(); }
+
+        System.out.println("cast ballot upload complete");
+
+    }
+
+    /**
      * Dumps the ballots to the server TODO more refined explanation
      */
     public void uploadToServer() {
@@ -196,6 +248,7 @@ public class Tap {
 
             public void ballotAccepted(BallotScanAcceptedEvent e){
                 /* TODO? BallotStore.castCommittedBallot(e.getBID().toString()); */
+                uploadCastBallot(e);
             }
 
             public void commitBallot(CommitBallotEvent e) {
@@ -205,6 +258,12 @@ public class Tap {
             public void ballotReceived(BallotReceivedEvent e){
                 /* TODO? BallotStore.mapPrecinct(e.getBID(), e.getPrecinct()); */
             }
+
+            public void spoilBallot(SpoilBallotEvent spoilBallotEvent){
+                uploadSpoiledBallot(spoilBallotEvent);
+            }
+
+
 
             /* Ignored events */
             public void left(LeaveEvent e) {}
@@ -228,12 +287,7 @@ public class Tap {
             public void tapMachine(TapMachineEvent tapMachineEvent) {}
             public void pollStatus(PollStatusEvent pollStatusEvent) {}
             public void overrideCancelDeny(OverrideCancelDenyEvent e) {}
-            public void spoilBallot(SpoilBallotEvent spoilBallotEvent) {
-                uploadSpoiledBallot(spoilBallotEvent);
-            }
-            public void castCommittedBallot(CastCommittedBallotEvent e) {
-                uploadCastBallot(e);
-            }
+            public void castCommittedBallot(CastCommittedBallotEvent e) {}
             public void overrideCommitConfirm(OverrideCommitConfirmEvent e) {}
             public void scannerStart(StartScannerEvent startScannerEvent) {}
             public void overrideCancelConfirm(OverrideCancelConfirmEvent e) {}
@@ -248,14 +302,6 @@ public class Tap {
             public void startUpload(StartUploadEvent startUploadEvent) {
                 System.out.println("Supervisor started upload...");
                 uploadPending.add(startUploadEvent.getSerial());
-            }
-
-            public void uploadCastBallot(CastCommittedBallotEvent e){
-                System.out.println("commited ballot cast!");
-            }
-
-            public void uploadSpoiledBallot(SpoilBallotEvent spoilBallotEvent){
-                System.out.println("ballot spoiled");
             }
 
             @Override
