@@ -259,6 +259,8 @@ public class VoteBox{
 
 
                 Ballot<PlaintextRaceSelection> ballot = new Ballot<>(bid, ballotForm, nonce.toString());
+                System.out.println("ballot:");
+                System.out.println(ballot);
 
                 // TODO this is where we will split the ballot into multiple ballots, print them, and announce them
 
@@ -283,6 +285,8 @@ public class VoteBox{
 
                 /* Announce ballot printing and print */
                 List<List<String>> races = currentDriver.getBallotAdapter().getRaceGroups();
+                System.out.println("races:");
+                System.out.println(races);
                 auditorium.announce(new BallotPrintingEvent(mySerial, bid, nonce));
                 printer = new Printer(_currentBallotFile, races);
 
