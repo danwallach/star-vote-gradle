@@ -37,7 +37,7 @@ import java.net.URL;
  */
 public class BallotParserTest extends TestCase {
 
-	public final URL SCHEMA = getClass().getResource("/votebox/middle/schema/ballot_schema.xsd");
+	public final URL SCHEMA = getClass().getResource("/ballot_schema.xsd");
 
 	public static final String PATH = "votebox/middle/ballot/test/";
 
@@ -65,24 +65,15 @@ public class BallotParserTest extends TestCase {
 
 	}
 
-	/**
-	 * Empty layout. Makes sure the @BallotParser works
-     * with an empty @Ballot
-	 * 
-	 * @throws Exception
-	 */
-	public void test_zero() throws Exception {
-
-        /* Set up a ballot */
+	public void test_parse() throws Exception {
 		MyGlobalVars vars = new MyGlobalVars();
-		vars.setBallotFile(PATH + "test1.xml");
+		vars.setBallotFile("src/test/resources/bigTest/ballot.xml");
 		vars.setBallotSchema(SCHEMA);
 		RuntimeBallot ballot = new BallotParser().getBallot(vars);
 
-        /* Test */
-		assertEquals(1, ballot.getCards().size());
-		assertEquals(ballot, ballot.getCards().get(0).getParent());
-		assertTrue(ballot.getProperties().contains("prop1"));
-		assertTrue(ballot.getCards().get(0).getProperties().contains("prop2"));
+		System.out.println(ballot.getRaceGroups());
+		System.out.println(ballot.getRaceGroups().size());
+
+		//Ballot<PlaintextRaceSelection> ballot = new Ballot<>(bid, ballotForm, nonce.toString());
 	}
 }
