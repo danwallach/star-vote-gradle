@@ -69,5 +69,8 @@ public class Ballot<T extends ARaceSelection> implements Serializable {
      */
     public Integer getSize() { return size; }
 
-
+    @Override
+    public String toString() {
+        return "Ballot " + bid + ": (" + ballot.toString() + ")";
+    }
 }
