@@ -657,7 +657,7 @@ public class VoteBox{
                     path        = new File(path, "ballot"/* + protectedCount*/);
                     path.mkdirs();
 
-                    bid = String.valueOf(100000 + rand.nextFloat() * 900000);
+                    bid = String.valueOf(10000000 + rand.nextFloat() * 90000000);
                     precinct = e.getPrecinct();
 
                     System.out.println("Dealing with ballot " + bid + " in precinct " + precinct + "...");
