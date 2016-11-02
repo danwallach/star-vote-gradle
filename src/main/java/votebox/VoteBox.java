@@ -657,7 +657,7 @@ public class VoteBox{
                     path        = new File(path, "ballot"/* + protectedCount*/);
                     path.mkdirs();
 
-                    bid = String.valueOf(10000000 + rand.nextFloat() * 90000000);
+                    bid = generateBid();
                     precinct = e.getPrecinct();
 
                     System.out.println("Dealing with ballot " + bid + " in precinct " + precinct + "...");
@@ -965,7 +965,7 @@ public class VoteBox{
                     path        = new File(path, "ballot"/* + protectedCount*/);
                     path.mkdirs();
 
-                    bid = String.valueOf(rand.nextInt(Integer.MAX_VALUE));
+                    bid = generateBid();
 
                     try {
                         _currentBallotFile = new File(path, "ballot.zip");
@@ -1106,6 +1106,8 @@ public class VoteBox{
 
     }
 
+
+
     /**
      * A getter method to send the BallotFile to the printer
      *
@@ -1114,6 +1116,31 @@ public class VoteBox{
      public File getCurrentBallotFile(){
          return _currentBallotFile;
      }
+
+     private String generateBid(){
+
+         String newbid = "";
+        for (int i = 0; i < 2; i++){
+            newbid = String.format("%s%c", newbid,rand.nextInt(26) + 'A' );
+        }
+        newbid += rand.nextInt(10);
+        newbid += "-";
+
+        newbid += String.format("%03d", rand.nextInt(1000));
+        newbid += "-";
+
+        newbid = String.format("%s%c", newbid,rand.nextInt(26) + 'A' );
+        newbid += String.format("%02d", rand.nextInt(100));
+        newbid += "-";
+
+        newbid += String.format("%02d", rand.nextInt(100));
+        newbid = String.format("%s%c", newbid,rand.nextInt(26) + 'A' );
+        newbid += "-";
+
+        newbid = String.format("%s%c", newbid,rand.nextInt(26) + 'A' );
+        newbid += String.format("%02d", rand.nextInt(100));
+        return newbid;
+    }
 
     /**
      * Main entry point into the program. If an argument is given, it will be
