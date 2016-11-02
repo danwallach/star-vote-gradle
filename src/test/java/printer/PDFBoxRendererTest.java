@@ -28,9 +28,7 @@ public class PDFBoxRendererTest {
   public void pageHandling() throws Exception {
     File file = new File("src/test/java/printer/test.pdf");
 
-    PDDocument document = new PDDocument();
-
-    try {
+    try (PDDocument document = new PDDocument()) {
       PDPage page = new PDPage();
       document.addPage(page);
 
@@ -84,7 +82,7 @@ public class PDFBoxRendererTest {
       for (int i = 0; i < 39; i++) {
         contents.beginText();
         contents.setFont(font, 12);
-        contents.newLineAtOffset(75, 665-15*i);
+        contents.newLineAtOffset(75, 665 - 15 * i);
         contents.showText("###");
         contents.endText();
       }
@@ -92,7 +90,7 @@ public class PDFBoxRendererTest {
       for (int i = 0; i < 39; i++) {
         contents.beginText();
         contents.setFont(font, 12);
-        contents.newLineAtOffset(350, 665-15*i);
+        contents.newLineAtOffset(350, 665 - 15 * i);
         contents.showText("###");
         contents.endText();
       }
@@ -100,15 +98,9 @@ public class PDFBoxRendererTest {
       contents.close();
 
       document.save(file);
-    }
-
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
       fail();
-    }
-
-    finally {
-      document.close();
     }
   }
 

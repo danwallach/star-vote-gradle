@@ -30,6 +30,7 @@ import crypto.*;
 import crypto.adder.AdderInteger;
 import preptool.model.language.Language;
 import preptool.model.layout.manager.RenderingUtils;
+import printer.BoxPrinter;
 import printer.Printer;
 import sexpression.*;
 import sexpression.stream.InvalidVerbatimStreamException;
@@ -285,13 +286,31 @@ public class VoteBox{
 
                 /* Announce ballot printing and print */
                 List<List<String>> races = currentDriver.getBallotAdapter().getRaceGroups();
-                System.out.println("races:");
-                System.out.println(races);
-                auditorium.announce(new BallotPrintingEvent(mySerial, bid, nonce));
-                printer = new Printer(_currentBallotFile, races);
 
-                boolean success = printer.printCommittedBallot(ballot.getRaceSelections(), bid);
-                printer.printedReceipt(bid);
+                System.out.println("ballot:");
+                System.out.println(ballot.getRaceSelections());
+
+                System.out.println("\nbid:");
+                System.out.println(races);
+
+                System.out.println("\nraces:");
+                System.out.println(races);
+
+                System.out.println("\nfile:");
+                System.out.println(_currentBallotFile.toString());
+
+                auditorium.announce(new BallotPrintingEvent(mySerial, bid, nonce));
+                //printer = new Printer(_currentBallotFile, races);
+
+                //boolean success = printer.printCommittedBallot(ballot.getRaceSelections(), bid);
+                //printer.printedReceipt(bid);
+
+                boolean success = false;
+                try {
+                    success = BoxPrinter.printCommittedBallot(ballot.getRaceSelections(), bid, races, _currentBallotFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 /* By this time, the voter is done voting */
                 /* Wait before returning to inactive */
