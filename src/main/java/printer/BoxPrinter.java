@@ -12,6 +12,7 @@ import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import tap.BallotImageHelper;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -42,15 +43,8 @@ public class BoxPrinter {
 
     /* String paths for accessing ballot PNG files. */
     String fileChar = System.getProperty("file.separator");
-    String ballotPath = ballotFile.getAbsolutePath();
-    String cleanFilePath = ballotPath.substring(0, ballotPath.lastIndexOf(".")) + fileChar;
-    String path = cleanFilePath + "media" + fileChar;
-    String altPath = cleanFilePath + "data" + fileChar + "media" + fileChar;
-    String lineSeparatorFileNameAlt = altPath + "LineSeparator.png";
-    String lineSeparatorFileName = path + "LineSeparator.png";
-    String PDFFileName = cleanFilePath + "ballot.pdf";
 
-    File file = new File(PDFFileName);
+    File file = new File("ballot.pdf");
 
     try (PDDocument document = new PDDocument()) {
       PDPage page = new PDPage();
@@ -77,7 +71,7 @@ public class BoxPrinter {
       contents.beginText();
       contents.setFont(ocrFont, 12);
       contents.newLineAtOffset(75, 690);
-      contents.showText("12345");
+      contents.showText(bid);
       contents.endText();
 
       // Header text
@@ -108,17 +102,46 @@ public class BoxPrinter {
       ArrayList<PDImageXObject> currentColumn = new ArrayList<>();
       columnsToPrint.add(currentColumn);
 
+      // Race separator image
+      BufferedImage lineSeparator = new BufferedImage(200,3,BufferedImage.TYPE_INT_ARGB);
+      Graphics2D g = (Graphics2D) lineSeparator.getGraphics();
+      g.setColor(Color.BLACK);
+      g.fillRect(0,0,200,3);
+
       // Add image files to columns to render later
       for (String selection : choices) {
+        // Get race title
         String title = actualRaceNameImagePairs.get(i).getLabel();
-        System.out.println(title + fileChar + title + "_printable_en.png");
-        currentColumn.add(PDImageXObject.createFromFileByContent(
-                new File("tmp/ballots/ballot/data/media/" + title + fileChar + title + "_printable_en.png"), document));
-        currentColumn.add(PDImageXObject.createFromFileByContent(
-                new File("tmp/ballots/ballot/data/media/" + selection + fileChar + selection + "_printable_en.png"), document));
+
+        // Load images into BufferedImage
+        BufferedImage racePic = ImageIO.read(
+                new File("tmp/ballots/ballot/data/media/" + title + fileChar + title + "_printable_en.png"));
+        BufferedImage selectPic = ImageIO.read(
+                new File("tmp/ballots/ballot/data/media/" + selection + fileChar + selection + "_printable_en.png"));
+
+        // Trim race PNG
+        racePic = PrintImageUtils.trimImageHorizontally(racePic, true, Integer.MAX_VALUE);
+        racePic = PrintImageUtils.trimImageHorizontally(racePic, false, Integer.MAX_VALUE);
+        racePic = PrintImageUtils.trimImageVertically(racePic, true, Integer.MAX_VALUE);
+        racePic = PrintImageUtils.trimImageVertically(racePic, false, Integer.MAX_VALUE);
+
+        // Crop off front of selection PNG (that weird number in front of the printable IMG
+        selectPic = selectPic.getSubimage(400, 0, selectPic.getWidth() - 400, selectPic.getHeight());
+
+        // Crop selection PNG
+        selectPic = PrintImageUtils.trimImageHorizontally(selectPic, true, Integer.MAX_VALUE);
+        selectPic = PrintImageUtils.trimImageHorizontally(selectPic, false, Integer.MAX_VALUE);
+        selectPic = PrintImageUtils.trimImageVertically(selectPic, true, Integer.MAX_VALUE);
+        selectPic = PrintImageUtils.trimImageVertically(selectPic, false, Integer.MAX_VALUE);
+
+        // Add PDImageXObject images to the column
+        currentColumn.add(JPEGFactory.createFromImage(document, racePic));
+        currentColumn.add(JPEGFactory.createFromImage(document, selectPic));
+        currentColumn.add(JPEGFactory.createFromImage(document, lineSeparator));
+
         i++;
 
-        if (i % 46 == 0) {
+        if (i % 24 == 0) {
           currentColumn = new ArrayList<>();
           columnsToPrint.add(currentColumn);
         }
@@ -128,29 +151,80 @@ public class BoxPrinter {
       ArrayList<PDImageXObject> left = columnsToPrint.get(0);
 
       int leftJ = 0;
-      for (PDImageXObject image : left) {
+      while (left.size() >= 3) {
+        PDImageXObject race = left.get(0);
+        PDImageXObject selection = left.get(1);
+        PDImageXObject sep = left.get(2);
+
         try {
+          // Draw race
           contents.beginMarkedContent(COSName.IMAGE);
-          contents.drawImage(image, 75, 665 - 15 * leftJ);
+          contents.drawImage(race, 75, 660 - (80 * leftJ),
+                  new Double(race.getWidth() * 0.25).intValue(),
+                  new Double(race.getHeight() * 0.25).intValue());
           contents.endMarkedContent();
+
+          // Draw selection
+          contents.beginMarkedContent(COSName.IMAGE);
+          contents.drawImage(selection, 75, 625 - (80 * leftJ),
+                  new Double(selection.getWidth() * 0.25).intValue(),
+                  new Double(selection.getHeight() * 0.25).intValue());
+          contents.endMarkedContent();
+
+          // Draw separator
+          contents.beginMarkedContent(COSName.IMAGE);
+          contents.drawImage(sep, 75, 610 - (80 * leftJ));
+          contents.endMarkedContent();
+
           leftJ++;
         } catch (IOException e) {
           e.printStackTrace();
         }
+
+        // Remove the printed images from the queue
+        left.remove(0);
+        left.remove(1);
+        left.remove(2);
       }
 
       if (columnsToPrint.size() > 1) {
         ArrayList<PDImageXObject> right = columnsToPrint.get(1);
         int rightJ = 0;
-        for (PDImageXObject image : right) {
+
+        while (right.size() >= 3) {
+          PDImageXObject race = right.get(0);
+          PDImageXObject selection = right.get(1);
+          PDImageXObject sep = right.get(2);
+
           try {
+            // Draw race
             contents.beginMarkedContent(COSName.IMAGE);
-            contents.drawImage(image, 350, 665 - 15 * rightJ);
+            contents.drawImage(race, 350, 660 - (80 * rightJ),
+                    new Double(race.getWidth() * 0.25).intValue(),
+                    new Double(race.getHeight() * 0.25).intValue());
             contents.endMarkedContent();
+
+            // Draw selection
+            contents.beginMarkedContent(COSName.IMAGE);
+            contents.drawImage(selection, 350, 625 - (80 * rightJ),
+                    new Double(selection.getWidth() * 0.25).intValue(),
+                    new Double(selection.getHeight() * 0.25).intValue());
+            contents.endMarkedContent();
+
+            // Draw separator
+            contents.beginMarkedContent(COSName.IMAGE);
+            contents.drawImage(sep, 350, 610 - (80 * rightJ));
+            contents.endMarkedContent();
+
             rightJ++;
           } catch (IOException e) {
             e.printStackTrace();
           }
+
+          // Remove the printed images from the queue
+          right.remove(0);
+          right.remove(1);
+          right.remove(2);
         }
       }
 
