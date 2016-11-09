@@ -347,7 +347,7 @@ public class VoteBox{
 
                 System.out.println("\nBID: " + bid + "\n");
 
-                auditorium.announce(new BallotPrintSuccessEvent(mySerial, bid, nonce));
+                pages.forEach(page -> auditorium.announce(new BallotPrintSuccessEvent(mySerial, page.getBid(), nonce)));
             }
         });
 
