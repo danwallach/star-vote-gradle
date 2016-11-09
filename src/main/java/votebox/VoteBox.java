@@ -263,54 +263,78 @@ public class VoteBox{
                 System.out.println("ballot:");
                 System.out.println(ballot);
 
-                // TODO this is where we will split the ballot into multiple ballots, print them, and announce them
+                /* Split the ballot into multiple pages, encrypt them, and print them. */
+                List<Ballot<PlaintextRaceSelection>> pages = new ArrayList<Ballot<PlaintextRaceSelection>>();
 
-                /* Encrypt Ballot */
-                Ballot<EncryptedRaceSelection<ExponentialElGamalCiphertext>> encBallot;
+                char additional = 'A';
+                while (ballotForm.size() > 16) {
+                    List<PlaintextRaceSelection> page = ballotForm.subList(0, 15);
 
-                try { encBallot = ballotCrypter.encrypt(ballot); }
-                catch (Exception e) { e.printStackTrace(); throw new RuntimeException("Could not encrypt the ballot because of " + e.getClass()); }
+                    Ballot<PlaintextRaceSelection> pageBallot = new Ballot<>(bid + additional,
+                            page, nonce.toString());
 
+                    additional += 1;
 
-                /* Check if provisional and choose announcement format */
-                if (!isProvisional) {
-
-                    auditorium.announce(new CommitBallotEvent(mySerial, nonce, ASEConverter.convertToASE(encBallot).toVerbatim(), bid, precinct));
-
+                    pages.add(pageBallot);
                 }
 
-                /* Provisional */
-                else {
-                    auditorium.announce(new ProvisionalCommitEvent(mySerial, nonce, ASEConverter.convertToASE(encBallot).toVerbatim(), bid));
+                if (ballotForm.size() % 16 != 0) {
+                    pages.add(new Ballot<>(bid + additional, ballotForm.subList(
+                            Math.floorDiv(ballotForm.size(), 16), ballotForm.size()), nonce.toString()));
+                }
+
+                /* Encrypt Ballot */
+                for (Ballot<PlaintextRaceSelection> ballotPage : pages) {
+                    Ballot<EncryptedRaceSelection<ExponentialElGamalCiphertext>> encBallot;
+
+                    try {
+                        encBallot = ballotCrypter.encrypt(ballotPage);
+                    } catch (Exception e) {
+                        e.printStackTrace(); throw new RuntimeException("Could not encrypt the ballot because of "
+                                + e.getClass());
+                    }
+
+                    if (!isProvisional) {
+                        auditorium.announce(new CommitBallotEvent(mySerial, nonce,
+                                ASEConverter.convertToASE(encBallot).toVerbatim(), bid, precinct));
+                    } else {
+                        auditorium.announce(new ProvisionalCommitEvent(mySerial, nonce,
+                                ASEConverter.convertToASE(encBallot).toVerbatim(), bid));
+                    }
                 }
 
                 /* Announce ballot printing and print */
                 List<List<String>> races = currentDriver.getBallotAdapter().getRaceGroups();
 
+                /* Debugging statements
                 System.out.println("ballot:");
                 System.out.println(ballot.getRaceSelections());
 
                 System.out.println("\nbid:");
-                System.out.println(races);
+                System.out.println(bid);
 
                 System.out.println("\nraces:");
                 System.out.println(races);
 
                 System.out.println("\nfile:");
                 System.out.println(_currentBallotFile.toString());
+                */
 
                 auditorium.announce(new BallotPrintingEvent(mySerial, bid, nonce));
-                //printer = new Printer(_currentBallotFile, races);
 
-                //boolean success = printer.printCommittedBallot(ballot.getRaceSelections(), bid);
-                //printer.printedReceipt(bid);
+                pages.forEach(ballotPage -> auditorium.announce(
+                        new BallotPrintingEvent(mySerial, ballotPage.getBid(), nonce))
+                );
 
-                boolean success = false;
-                try {
-                    success = BoxPrinter.printCommittedBallot(ballot.getRaceSelections(), bid, races, _currentBallotFile);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
+                pages.forEach(ballotPage -> {
+                    try {
+                        BoxPrinter.printCommittedBallot(ballotPage.getRaceSelections(), ballotPage.getBid(),
+                                races, _currentBallotFile);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
 
                 /* By this time, the voter is done voting */
                 /* Wait before returning to inactive */
@@ -323,9 +347,7 @@ public class VoteBox{
 
                 System.out.println("\nBID: " + bid + "\n");
 
-                if (success)
-                    auditorium.announce(new BallotPrintSuccessEvent(mySerial, bid, nonce));
-
+                auditorium.announce(new BallotPrintSuccessEvent(mySerial, bid, nonce));
             }
         });
 
