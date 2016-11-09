@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The new PDF generator using Apache PDFBox
+ * The new PDF generator using Apache PDFBox.
  */
 public class BoxPrinter {
   public static boolean printCommittedBallot(List<PlaintextRaceSelection> ballot, String bid,
@@ -44,7 +44,7 @@ public class BoxPrinter {
     /* String paths for accessing ballot PNG files. */
     String fileChar = System.getProperty("file.separator");
 
-    File file = new File("ballot.pdf");
+    File file = new File("ballot_" + bid + ".pdf");
 
     try (PDDocument document = new PDDocument()) {
       PDPage page = new PDPage();
