@@ -72,6 +72,7 @@ public class BallotParserTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void test_zero() throws Exception {
+
         /* Set up a ballot */
 		MyGlobalVars vars = new MyGlobalVars();
 		vars.setBallotFile(PATH + "test1.xml");
