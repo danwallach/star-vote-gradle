@@ -110,6 +110,9 @@ public class Model {
     /** An object that maintains a hash chain record of voting */
     private HashChain hashChain;
 
+    /** Map from committedballot ids to print time stamp */
+    private Map<String, TimeStamp> timeStampMap;
+
     /**
      * Equivalent to Model(-1, params);
      * 
@@ -163,6 +166,8 @@ public class Model {
         hashChain = new HashChain();
 
         machinesToCommits = new HashMap<>();
+
+        timeStampMap = new HashMap<>();
     }
 
     /**
@@ -637,7 +642,6 @@ public class Model {
             public void ballotAccepted(BallotScanAcceptedEvent e){}
             public void ballotRejected(BallotScanRejectedEvent e){}
             public void ballotPrinting(BallotPrintingEvent e) {}
-            public void ballotPrintSuccess(BallotPrintSuccessEvent e) {}
             public void ballotPrintFail(BallotPrintFailEvent e) {}
             public void pollMachines(PollMachinesEvent e) {}
             public void spoilBallot(SpoilBallotEvent e) {}
@@ -646,6 +650,13 @@ public class Model {
             public void completedUpload(CompletedUploadEvent completedUploadEvent) {}
             public void uploadBallots(BallotUploadEvent ballotUploadEvent) {}
 
+            /**
+             * Adding printed ballot to timestamp map
+             * @param e BallotPrintSuccessEvent
+             */
+            public void ballotPrintSuccess(BallotPrintSuccessEvent e) {
+                timeStampMap.put(e.getBID(), new TimeStamp(300)); //Keep alive for 5 minutes
+            }
 
             /**
              * Handler for the activated message. Sets all other supervisors
@@ -1301,6 +1312,8 @@ public class Model {
                     System.out.println("Sending scan confirmation!");
                     System.out.println("BID: " + bid);
 
+                    timeStampMap.remove(bid);
+
                     auditorium.announce(new BallotScanAcceptedEvent(mySerial, bid));
 
                 } catch (Exception x) {
@@ -1420,6 +1433,19 @@ public class Model {
 
         /* Start the heartbeat timer */
         statusTimer.start();
+
+        java.util.Timer ballotValidator = new java.util.Timer();
+        ballotValidator.scheduleAtFixedRate(new TimerTask(){
+            public void run(){
+                for(String bid: timeStampMap.keySet()){
+                    if(!timeStampMap.get(bid).isValid()){
+                        spoilBallot(bid);
+                        timeStampMap.remove(bid);
+                    }
+                }
+            }
+        },1000, 5000);
+
     }
 
     /**
