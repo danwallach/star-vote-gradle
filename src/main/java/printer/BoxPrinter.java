@@ -183,8 +183,8 @@ public class BoxPrinter {
 
         // Remove the printed images from the queue
         left.remove(0);
-        left.remove(1);
-        left.remove(2);
+        left.remove(0);
+        left.remove(0);
       }
 
       if (columnsToPrint.size() > 1) {
