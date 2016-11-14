@@ -125,7 +125,7 @@ public class Tap {
             List<BasicNameValuePair> bnvp = new ArrayList<>();
 
             bnvp.add(new BasicNameValuePair("spoiledBID", spoilBallotEvent.getBID()));
-            //bnvp.add(new BasicNameValuePair("spoiledPrecinct", spoilBallotEvent.getPrecinct()));
+            bnvp.add(new BasicNameValuePair("spoiledPrecinct", spoilBallotEvent.getPrecinct()));
 
             post.setEntity(new UrlEncodedFormEntity(bnvp));
 
