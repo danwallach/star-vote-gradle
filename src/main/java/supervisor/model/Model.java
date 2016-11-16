@@ -22,16 +22,18 @@
 
 package supervisor.model;
 
+import auditorium.AuditoriumCryptoException;
 import auditorium.IAuditoriumParams;
 import auditorium.NetworkException;
-import crypto.EncryptedRaceSelection;
-import crypto.ExponentialElGamalCiphertext;
+import crypto.*;
+import crypto.adder.AdderPrivateKeyShare;
 import sexpression.ASEConverter;
 import sexpression.ASExpression;
 import sexpression.ListExpression;
 import sexpression.StringExpression;
 import sexpression.stream.Base64;
 import supervisor.model.machine.*;
+import votebox.AuditoriumParams;
 import votebox.events.*;
 
 import javax.swing.*;
@@ -1493,18 +1495,42 @@ public class Model {
      * @param bid       the ID of the ballot to be removed
      * @return          whether or not a bid was actually spoiled
      */
+    @SuppressWarnings("unchecked")
     public boolean spoilBallot(String bid) {
-
+        System.out.println("Start of spoilBallot");
         String nonce;
-        Ballot ballot;
-        Precinct p = getPrecinctWithBID(bid);
+        Ballot<EncryptedRaceSelection<ExponentialElGamalCiphertext>> ballot;
+        Precinct<ExponentialElGamalCiphertext> p = getPrecinctWithBID(bid);
+
+        AuditoriumParams params = new AuditoriumParams("vb.conf");
+
+        DHExponentialElGamalCryptoType cryptoType = new DHExponentialElGamalCryptoType();
+
+        try {
+            cryptoType.loadPrivateKeyShares(
+                    Collections.singletonList(AuthorityManager.SESSION.generateRealPrivateKeyShare("1"))
+                            .toArray(new AdderPrivateKeyShare[1]));
+            cryptoType.loadPublicKey(params.getKeyStore().loadPEK());
+        }
+        catch (Exception ex) { throw new RuntimeException("Error loading the PEK from the KeyStore."); }
+
+        BallotCrypter<ExponentialElGamalCiphertext> ballotCrypter = new BallotCrypter<>(cryptoType);
 
         if (p != null) {
+            System.out.println("Start of spoilBallot if statement");
             nonce = p.getNonce(bid);
             ballot = p.challengeBallot(bid);
 
+            try {
+                Ballot<PlaintextRaceSelection> ballotPlain = ballotCrypter.decrypt(ballot);
+                System.out.println("Decrypting spoiled ballot works!");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             /* Announce that a ballot was spoiled */
-            auditorium.announce(new SpoilBallotEvent(mySerial, StringExpression.make(nonce), bid, ASEConverter.convertToASE(ballot).toVerbatim()));
+            auditorium.announce(new SpoilBallotEvent(mySerial, StringExpression.make(nonce), bid,
+                    ASEConverter.convertToASE(ballot).toVerbatim()));
 
             return true;
         }
