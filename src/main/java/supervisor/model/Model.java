@@ -1497,14 +1497,16 @@ public class Model {
 
         String nonce;
         Ballot ballot;
+        String precint;
         Precinct p = getPrecinctWithBID(bid);
 
         if (p != null) {
             nonce = p.getNonce(bid);
             ballot = p.challengeBallot(bid);
+            precint = p.getPrecinctID();
 
             /* Announce that a ballot was spoiled */
-            auditorium.announce(new SpoilBallotEvent(mySerial, StringExpression.make(nonce), bid, ASEConverter.convertToASE(ballot).toVerbatim()));
+            auditorium.announce(new SpoilBallotEvent(mySerial, StringExpression.make(nonce),  ASEConverter.convertToASE(ballot).toVerbatim(), bid, precint));
 
             return true;
         }

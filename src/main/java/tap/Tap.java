@@ -1,23 +1,23 @@
 /**
-  * This file is part of VoteBox.
-  * 
-  * VoteBox is free software: you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 3 as published by
-  * the Free Software Foundation.
-  * 
-  * You should have received a copy of the GNU General Public License
-  * along with VoteBox, found in the root of any distribution or
-  * repository containing all or part of VoteBox.
-  * 
-  * THIS SOFTWARE IS PROVIDED BY WILLIAM MARSH RICE UNIVERSITY, HOUSTON,
-  * TX AND IS PROVIDED 'AS IS' AND WITHOUT ANY EXPRESS, IMPLIED OR
-  * STATUTORY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, WARRANTIES OF
-  * ACCURACY, COMPLETENESS, AND NONINFRINGEMENT.  THE SOFTWARE USER SHALL
-  * INDEMNIFY, DEFEND AND HOLD HARMLESS RICE UNIVERSITY AND ITS FACULTY,
-  * STAFF AND STUDENTS FROM ANY AND ALL CLAIMS, ACTIONS, DAMAGES, LOSSES,
-  * LIABILITIES, COSTS AND EXPENSES, INCLUDING ATTORNEYS' FEES AND COURT
-  * COSTS, DIRECTLY OR INDIRECTLY ARISING OUR OF OR IN CONNECTION WITH
-  * ACCESS OR USE OF THE SOFTWARE.
+ * This file is part of VoteBox.
+ *
+ * VoteBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3 as published by
+ * the Free Software Foundation.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with VoteBox, found in the root of any distribution or
+ * repository containing all or part of VoteBox.
+ *
+ * THIS SOFTWARE IS PROVIDED BY WILLIAM MARSH RICE UNIVERSITY, HOUSTON,
+ * TX AND IS PROVIDED 'AS IS' AND WITHOUT ANY EXPRESS, IMPLIED OR
+ * STATUTORY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, WARRANTIES OF
+ * ACCURACY, COMPLETENESS, AND NONINFRINGEMENT.  THE SOFTWARE USER SHALL
+ * INDEMNIFY, DEFEND AND HOLD HARMLESS RICE UNIVERSITY AND ITS FACULTY,
+ * STAFF AND STUDENTS FROM ANY AND ALL CLAIMS, ACTIONS, DAMAGES, LOSSES,
+ * LIABILITIES, COSTS AND EXPENSES, INCLUDING ATTORNEYS' FEES AND COURT
+ * COSTS, DIRECTLY OR INDIRECTLY ARISING OUR OF OR IN CONNECTION WITH
+ * ACCESS OR USE OF THE SOFTWARE.
  */
 
 package tap;
@@ -111,6 +111,59 @@ public class Tap {
     }
 
     /**
+     * Uploads a spoiled ballot id to the server
+     */
+    public void uploadSpoiledBallot(SpoilBallotEvent spoilBallotEvent){
+        HttpClient client = new DefaultHttpClient();
+
+        String spoilballoturl = "spoil";
+
+        HttpPost post = new HttpPost("http://localhost:9000/" + spoilballoturl);
+
+        try {
+
+            List<BasicNameValuePair> bnvp = new ArrayList<>();
+
+            bnvp.add(new BasicNameValuePair("spoiledBID", spoilBallotEvent.getBID()));
+            bnvp.add(new BasicNameValuePair("spoiledPrecinct", spoilBallotEvent.getPrecinct()));
+
+            post.setEntity(new UrlEncodedFormEntity(bnvp));
+
+            client.execute(post);
+
+        } catch (IOException e) { e.printStackTrace(); }
+
+        System.out.println("spoil ballot upload complete");
+
+    }
+
+    /**
+     * Uploads a spoiled ballot id to the server
+     */
+    public void uploadCastBallot(BallotScanAcceptedEvent ballotScanAcceptedEvent){
+        HttpClient client = new DefaultHttpClient();
+
+        String castballoturl = "cast";
+
+        HttpPost post = new HttpPost("http://localhost:9000/" + castballoturl);
+
+        try {
+
+            List<BasicNameValuePair> bnvp = new ArrayList<>();
+
+            bnvp.add(new BasicNameValuePair("castBID", ballotScanAcceptedEvent.getBID()));
+
+            post.setEntity(new UrlEncodedFormEntity(bnvp));
+
+            client.execute(post);
+
+        } catch (IOException e) { e.printStackTrace(); }
+
+        System.out.println("cast ballot upload complete");
+
+    }
+
+    /**
      * Dumps the ballots to the server TODO more refined explanation
      */
     public void uploadToServer() {
@@ -182,7 +235,9 @@ public class Tap {
                     BallotScanAcceptedEvent.getMatcher(),
                     PollsClosedEvent.getMatcher(),
                     StartUploadEvent.getMatcher(),
-                    BallotUploadEvent.getMatcher()
+                    BallotUploadEvent.getMatcher(),
+                    SpoilBallotEvent.getMatcher(), //ADDED THIS TO LISTEN TO THIS EVENT
+                    CastCommittedBallotEvent.getMatcher() //ADDED THIS TO LISTEN TO THIS EVENT
             );
 
         }
@@ -194,6 +249,7 @@ public class Tap {
 
             public void ballotAccepted(BallotScanAcceptedEvent e){
                 /* TODO? BallotStore.castCommittedBallot(e.getBID().toString()); */
+                uploadCastBallot(e);
             }
 
             public void commitBallot(CommitBallotEvent e) {
@@ -203,6 +259,12 @@ public class Tap {
             public void ballotReceived(BallotReceivedEvent e){
                 /* TODO? BallotStore.mapPrecinct(e.getBID(), e.getPrecinct()); */
             }
+
+            public void spoilBallot(SpoilBallotEvent spoilBallotEvent){
+                uploadSpoiledBallot(spoilBallotEvent);
+            }
+
+
 
             /* Ignored events */
             public void left(LeaveEvent e) {}
@@ -226,7 +288,6 @@ public class Tap {
             public void tapMachine(TapMachineEvent tapMachineEvent) {}
             public void pollStatus(PollStatusEvent pollStatusEvent) {}
             public void overrideCancelDeny(OverrideCancelDenyEvent e) {}
-            public void spoilBallot(SpoilBallotEvent spoilBallotEvent) {}
             public void castCommittedBallot(CastCommittedBallotEvent e) {}
             public void overrideCommitConfirm(OverrideCommitConfirmEvent e) {}
             public void scannerStart(StartScannerEvent startScannerEvent) {}
@@ -457,28 +518,28 @@ public class Tap {
 
             //TODO: Commented this part out for testing purpose
             /* Loop until an exception or tap is started */
-           // while (true) {
+            // while (true) {
 
-                //try {
+            //try {
 
                     /* Try to establish a socket connection */
-                    //Socket localCon = new Socket();
-                    Socket localCon = null;
-                    //localCon.connect(addr);
+            //Socket localCon = new Socket();
+            Socket localCon = null;
+            //localCon.connect(addr);
 
                     /* Start the tap */
-                    (new Tap(serial, null, launchCode, params)).start();
-                    System.out.println("Connection successful to " + addr);
-                  //  break;
-              //  }
+            (new Tap(serial, null, launchCode, params)).start();
+            System.out.println("Connection successful to " + addr);
+            //  break;
+            //  }
             /**
-            catch (IOException e) {
-                    System.out.println("Connection failed: " + e.getMessage());
-                    System.out.println("Retry in 5 seconds...");
-                    Thread.sleep(5000);
-                }
-                */
-           // }
+             catch (IOException e) {
+             System.out.println("Connection failed: " + e.getMessage());
+             System.out.println("Retry in 5 seconds...");
+             Thread.sleep(5000);
+             }
+             */
+            // }
         }
         catch (NumberFormatException e) {
             throw new RuntimeException("usage: Tap [serial] [report address] [port]; where port is between 1 and 65535 & [serial] is a positive integer", e);
