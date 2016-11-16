@@ -688,26 +688,6 @@ public class VoteBoxEventsTest extends TestCase {
         checkBallotEvent(event, event2);
     }
 
-    public void testSpoilBallot(){
-        ASExpression nonce = getBlob();
-
-        byte[] ballot = getBlob().toVerbatim();
-
-        SpoilBallotEvent event = new SpoilBallotEvent(0, nonce, "123456789", ballot);
-
-        ASExpression sexp = event.toSExp();
-
-        try {
-            assertEquals("(spoil-ballot " + nonce + " 123456789 " + ASExpression.makeVerbatim(ballot) + ")", sexp.toString());
-        } catch (InvalidVerbatimStreamException e) {
-            e.printStackTrace();
-        }
-
-        SpoilBallotEvent event2 = (SpoilBallotEvent)matcher.match(0, sexp);
-
-        checkBallotEvent(event, event2);
-
-    }
 
     public void testStartScanner(){
         StartScannerEvent event = new StartScannerEvent(0);

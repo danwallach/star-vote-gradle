@@ -49,6 +49,7 @@ public class SpoilBallotEvent extends ABallotEvent {
      * @param bid the ballot to be spoiled
      * @param ballot the encrypted copy of the ballot being spoiled
      * @param nonce  the nonce of the ballot
+     * @param precinct  the precinct of the ballot
      */
     public SpoilBallotEvent(int serial, ASExpression nonce,  byte[] ballot, String bid, String precinct) {
         super(serial, nonce,ballot, bid, precinct);
