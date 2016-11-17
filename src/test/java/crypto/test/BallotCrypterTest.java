@@ -33,7 +33,15 @@ public class BallotCrypterTest extends TestCase {
 
             DHExponentialElGamalCryptoType cryptoType = new DHExponentialElGamalCryptoType();
 
-            cryptoType.loadPrivateKeyShares(Collections.singletonList(AuthorityManager.SESSION.generateRealPrivateKeyShare("1")).toArray(new AdderPrivateKeyShare[1]));
+            AdderPrivateKeyShare[] keyShares = Collections.singletonList(AuthorityManager.SESSION.generateRealPrivateKeyShare("1")).toArray(new AdderPrivateKeyShare[1]);
+
+            System.out.println("about to print keys");
+
+            for(AdderPrivateKeyShare key: keyShares){
+                System.out.println(key);
+            }
+
+            cryptoType.loadPrivateKeyShares(keyShares);
             PEK = AuthorityManager.SESSION.generatePublicEncryptionKey();
             cryptoType.loadPublicKey(PEK);
 

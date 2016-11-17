@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.apache.pdfbox:fontbox:1.8.6">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.pdfbox/fontbox/1.8.6/24be806ffd12fc8ab4d69e8992377a877de36b8/fontbox-1.8.6.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.pdfbox/fontbox/1.8.6/ea07351b7294f5c3afc00310710116af0d43e3ae/fontbox-1.8.6-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

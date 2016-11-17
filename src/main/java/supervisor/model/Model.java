@@ -27,6 +27,7 @@ import auditorium.IAuditoriumParams;
 import auditorium.NetworkException;
 import crypto.*;
 import crypto.adder.AdderPrivateKeyShare;
+import crypto.exceptions.KeyGenerationException;
 import sexpression.ASEConverter;
 import sexpression.ASExpression;
 import sexpression.ListExpression;
@@ -1506,13 +1507,20 @@ public class Model {
 
         DHExponentialElGamalCryptoType cryptoType = new DHExponentialElGamalCryptoType();
 
+        //This may not be necessary
         try {
-            cryptoType.loadPrivateKeyShares(
-                    Collections.singletonList(AuthorityManager.SESSION.generateRealPrivateKeyShare("1"))
-                            .toArray(new AdderPrivateKeyShare[1]));
             cryptoType.loadPublicKey(params.getKeyStore().loadPEK());
         }
         catch (Exception ex) { throw new RuntimeException("Error loading the PEK from the KeyStore."); }
+
+        //This probably is though
+        try {
+            AdderPrivateKeyShare[] keyShares = Collections.singletonList(AuthorityManager.SESSION.generateRealPrivateKeyShare("1")).toArray(new AdderPrivateKeyShare[1]);
+            cryptoType.loadPrivateKeyShares(keyShares);
+        } catch(KeyGenerationException e){
+            e.printStackTrace();
+        }
+
 
         BallotCrypter<ExponentialElGamalCiphertext> ballotCrypter = new BallotCrypter<>(cryptoType);
 
