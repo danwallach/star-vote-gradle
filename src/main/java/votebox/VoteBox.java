@@ -348,6 +348,7 @@ public class VoteBox{
                         document.save(byteArrayOutputStream);
                         document.close();
                         byte[] pdfArray = byteArrayOutputStream.toByteArray();
+                        System.out.println(pdfArray.toString());
                         auditorium.announce(new BallotPrintSuccessEvent(mySerial, ballotPage.getBid(), nonce, pdfArray));
                     } catch (IOException e) {
                         e.printStackTrace();

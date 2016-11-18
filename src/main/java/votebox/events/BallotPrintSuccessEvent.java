@@ -45,7 +45,7 @@ public class BallotPrintSuccessEvent extends ABallotEvent{
         }
 
         public BallotPrintSuccessEvent(int serial, String bid, ASExpression nonce, byte[] doc){
-            super(serial, nonce, doc, bid);
+            super(serial, nonce, bid, doc);
         }
 
         /** @see votebox.events.IAnnounceEvent#fire(VoteBoxEventListener) */
@@ -55,9 +55,15 @@ public class BallotPrintSuccessEvent extends ABallotEvent{
 
         /** @see votebox.events.IAnnounceEvent#toSExp() */
         public ASExpression toSExp() {
-            return new ListExpression( StringExpression.makeString("ballot-print-success"),
-                    StringExpression.makeString( getBID() ),
-                    getNonce());
+          try {
+            return new ListExpression(StringExpression.makeString("ballot-print-success"),
+                    StringExpression.makeString(getBID()),
+                    getNonce(),
+                    ASExpression.makeVerbatim(getBallot()));
+          } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+          }
         }
 
 }
