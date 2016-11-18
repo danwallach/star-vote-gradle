@@ -52,6 +52,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -328,17 +329,6 @@ public class VoteBox{
                 );
 
 
-                pages.forEach(ballotPage -> {
-                    try {
-                        PDDocument document = BoxPrinter.printCommittedBallot(ballotPage.getRaceSelections(),
-                                ballotPage.getBid(), races, _currentBallotFile);
-                        File file = new File("ballot_" + bid + ".pdf");
-                        document.save(file);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-
                 /* By this time, the voter is done voting */
                 /* Wait before returning to inactive */
 
@@ -350,7 +340,19 @@ public class VoteBox{
 
                 System.out.println("\nBID: " + bid + "\n");
 
-                pages.forEach(page -> auditorium.announce(new BallotPrintSuccessEvent(mySerial, page.getBid(), nonce)));
+                pages.forEach(ballotPage -> {
+                    try {
+                        PDDocument document = BoxPrinter.printCommittedBallot(ballotPage.getRaceSelections(),
+                                ballotPage.getBid(), races, _currentBallotFile);
+                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                        document.save(byteArrayOutputStream);
+                        document.close();
+                        byte[] pdfArray = byteArrayOutputStream.toByteArray();
+                        auditorium.announce(new BallotPrintSuccessEvent(mySerial, ballotPage.getBid(), nonce, pdfArray));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                   });
             }
         });
 
@@ -501,6 +503,7 @@ public class VoteBox{
             }
         });
     }
+
 
     /**
      * This method generates a short code for each vote on this machine, which will

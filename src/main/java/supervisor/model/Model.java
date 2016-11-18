@@ -114,6 +114,11 @@ public class Model {
     private Map<String, TimeStamp> timeStampMap;
 
     /**
+     * Map from ballot id to the pdf documents.
+     */
+    private Map<String, byte[]> docMap;
+
+    /**
      * Equivalent to Model(-1, params);
      * 
      * @param params IAuditoriumParams to use for determining settings on this Supervisor model.
@@ -168,6 +173,7 @@ public class Model {
         machinesToCommits = new HashMap<>();
 
         timeStampMap = new HashMap<>();
+        docMap = new HashMap<>();
     }
 
     /**
@@ -656,6 +662,7 @@ public class Model {
              */
             public void ballotPrintSuccess(BallotPrintSuccessEvent e) {
                 timeStampMap.put(e.getBID(), new TimeStamp(300)); //Keep alive for 5 minutes
+                docMap.put(e.getBID(), e.getBallot());
             }
 
             /**
@@ -1506,7 +1513,7 @@ public class Model {
             precint = p.getPrecinctID();
 
             /* Announce that a ballot was spoiled */
-            auditorium.announce(new SpoilBallotEvent(mySerial, StringExpression.make(nonce),  ASEConverter.convertToASE(ballot).toVerbatim(), bid, precint));
+            auditorium.announce(new SpoilBallotEvent(mySerial, StringExpression.make(nonce),  ASEConverter.convertToASE(docMap.get(bid)).toVerbatim(), bid, precint));
 
             return true;
         }

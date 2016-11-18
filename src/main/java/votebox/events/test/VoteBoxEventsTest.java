@@ -775,8 +775,4 @@ public class VoteBoxEventsTest extends TestCase {
         assertEquals(event.getProtectedCount(), event2.getProtectedCount());
     }
 
-
-
-
-
 }
