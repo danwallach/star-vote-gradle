@@ -19,7 +19,8 @@ public class BallotPrintSuccessEvent extends ABallotEvent{
                 if (res != NoMatch.SINGLETON) {
                     String bid = ((ListExpression) res).get(0).toString();
                     ASExpression nonce = ((ListExpression) res).get( 1 );
-                    return new BallotPrintSuccessEvent( serial, bid, nonce );
+                    byte[] doc = ((ListExpression) res).get(2).toVerbatim();
+                    return new BallotPrintSuccessEvent( serial, bid, nonce, doc);
                 }
 
                 return null;
@@ -41,6 +42,10 @@ public class BallotPrintSuccessEvent extends ABallotEvent{
          */
         public BallotPrintSuccessEvent(int serial, String bid, ASExpression nonce) {
             super(serial, bid, nonce);
+        }
+
+        public BallotPrintSuccessEvent(int serial, String bid, ASExpression nonce, byte[] doc){
+            super(serial, nonce, doc, bid);
         }
 
         /** @see votebox.events.IAnnounceEvent#fire(VoteBoxEventListener) */
