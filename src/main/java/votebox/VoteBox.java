@@ -28,6 +28,7 @@ import auditorium.Event;
 import auditorium.NetworkException;
 import crypto.*;
 import crypto.adder.AdderInteger;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import preptool.model.language.Language;
 import preptool.model.layout.manager.RenderingUtils;
 import printer.BoxPrinter;
@@ -329,8 +330,10 @@ public class VoteBox{
 
                 pages.forEach(ballotPage -> {
                     try {
-                        BoxPrinter.printCommittedBallot(ballotPage.getRaceSelections(), ballotPage.getBid(),
-                                races, _currentBallotFile);
+                        PDDocument document = BoxPrinter.printCommittedBallot(ballotPage.getRaceSelections(),
+                                ballotPage.getBid(), races, _currentBallotFile);
+                        File file = new File("ballot_" + bid + ".pdf");
+                        document.save(file);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

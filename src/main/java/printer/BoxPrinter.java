@@ -26,7 +26,7 @@ import java.util.Map;
  * The new PDF generator using Apache PDFBox.
  */
 public class BoxPrinter {
-  public static boolean printCommittedBallot(List<PlaintextRaceSelection> ballot, String bid,
+  public static PDDocument printCommittedBallot(List<PlaintextRaceSelection> ballot, String bid,
                                       List<List<String>> races, File ballotFile) throws IOException {
 
     final Map<String, Image> choiceToImage = BallotImageHelper.loadImagesForVVPAT(ballotFile);
@@ -44,9 +44,8 @@ public class BoxPrinter {
     /* String paths for accessing ballot PNG files. */
     String fileChar = System.getProperty("file.separator");
 
-    File file = new File("ballot_" + bid + ".pdf");
-
-    try (PDDocument document = new PDDocument()) {
+    PDDocument document = new PDDocument();
+    try {
       PDPage page = new PDPage();
       document.addPage(page);
 
@@ -229,13 +228,11 @@ public class BoxPrinter {
       }
 
       contents.close();
-
-      document.save(file);
     } catch (Exception e) {
       e.printStackTrace();
     }
 
-    return true;
+    return document;
   }
 
   /**
