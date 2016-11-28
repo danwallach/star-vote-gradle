@@ -52,7 +52,7 @@ public class SpoilBallotEvent extends ABallotEvent {
      * @param precinct  the precinct of the ballot
      */
     public SpoilBallotEvent(int serial, ASExpression nonce,  byte[] ballot, String bid) {
-        super(serial, nonce, bid, ballot);
+        super(serial, nonce,bid, ballot);
     }
 
     /** @return the matcher rule */
