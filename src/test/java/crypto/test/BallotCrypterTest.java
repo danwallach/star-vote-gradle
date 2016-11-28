@@ -107,7 +107,16 @@ public class BallotCrypterTest extends TestCase {
         return new Ballot<>(bid, raceSelectionList, bid);
     }
 
-    public void testLoadKeys(){ /* Check uninitialised */ }
+    public void testLoadKeys(){
+        ICryptoType ct = new DHExponentialElGamalCryptoType();
+        BallotCrypter bc = new BallotCrypter(ct);
+
+        /* Test loading with real keys */
+        String[] filePaths = {"testPublic.adk", "testPrivate.adk"};
+
+        try { bc.loadKeys(filePaths); }
+        catch (Exception e) { e.printStackTrace(); fail("There was an unexpected exception."); }
+    }
 
     public void testSetCryptoType(){ /* Check multiple sets */}
 
