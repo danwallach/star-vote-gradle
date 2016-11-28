@@ -26,21 +26,17 @@ public class SpoilBallotEvent extends ABallotEvent {
 
                 ASExpression nonce = list.get(1);
 
-                byte[] ballot = list.get(2).toVerbatim();
+                String bid = list.get(2).toString();
 
-                String bid = list.get(3).toString();
+                byte[] ballot = list.get(3).toVerbatim();
 
-
-
-                return new SpoilBallotEvent(serial, nonce, ballot, bid);
+                return new SpoilBallotEvent(serial, nonce, bid, ballot);
             }
 
             return null;
         }
 
     };
-
-
 
     /**
      * Constructs a new SpoilBallotEvent
@@ -49,10 +45,9 @@ public class SpoilBallotEvent extends ABallotEvent {
      * @param bid the ballot to be spoiled
      * @param ballot the encrypted copy of the ballot being spoiled
      * @param nonce  the nonce of the ballot
-     * @param precinct  the precinct of the ballot
      */
-    public SpoilBallotEvent(int serial, ASExpression nonce,  byte[] ballot, String bid) {
-        super(serial, nonce,bid, ballot);
+    public SpoilBallotEvent(int serial, ASExpression nonce, String bid,  byte[] ballot) {
+        super(serial, nonce, bid, ballot);
     }
 
     /** @return the matcher rule */
