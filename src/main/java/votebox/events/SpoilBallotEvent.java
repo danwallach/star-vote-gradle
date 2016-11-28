@@ -30,9 +30,9 @@ public class SpoilBallotEvent extends ABallotEvent {
 
                 String bid = list.get(3).toString();
 
-                String precinct = list.get(4).toString();
 
-                return new SpoilBallotEvent(serial, nonce, ballot, bid, precinct);
+
+                return new SpoilBallotEvent(serial, nonce, ballot, bid);
             }
 
             return null;
@@ -51,8 +51,8 @@ public class SpoilBallotEvent extends ABallotEvent {
      * @param nonce  the nonce of the ballot
      * @param precinct  the precinct of the ballot
      */
-    public SpoilBallotEvent(int serial, ASExpression nonce,  byte[] ballot, String bid, String precinct) {
-        super(serial, nonce,ballot, bid, precinct);
+    public SpoilBallotEvent(int serial, ASExpression nonce,  byte[] ballot, String bid) {
+        super(serial, nonce,ballot, bid);
     }
 
     /** @return the matcher rule */

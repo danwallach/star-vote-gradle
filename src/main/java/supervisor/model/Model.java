@@ -1513,7 +1513,7 @@ public class Model {
             precint = p.getPrecinctID();
 
             /* Announce that a ballot was spoiled */
-            auditorium.announce(new SpoilBallotEvent(mySerial, StringExpression.make(nonce),  ASEConverter.convertToASE(docMap.get(bid)).toVerbatim(), bid, precint));
+            auditorium.announce(new SpoilBallotEvent(mySerial, StringExpression.make(nonce),  ASEConverter.convertToASE(docMap.get(bid)).toVerbatim(), bid));
 
             return true;
         }
