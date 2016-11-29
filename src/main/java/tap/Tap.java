@@ -124,11 +124,12 @@ public class Tap {
 
             List<BasicNameValuePair> bnvp = new ArrayList<>();
 
+            System.out.print(spoilBallotEvent.getBID());
             bnvp.add(new BasicNameValuePair("spoiledBID", spoilBallotEvent.getBID()));
-           // bnvp.add(new BasicNameValuePair("spoiledPrecinct", spoilBallotEvent.getPrecinct()));
+            bnvp.add(new BasicNameValuePair("spoiledPrecinct", spoilBallotEvent.getPrecinct()));
 
             String encodedDoc = new String(Base64.decodeBase64(spoilBallotEvent.getBallot()));
-            //bnvp.add(new BasicNameValuePair("document", encodedDoc));
+            bnvp.add(new BasicNameValuePair("document", encodedDoc));
             post.setEntity(new UrlEncodedFormEntity(bnvp));
 
             client.execute(post);

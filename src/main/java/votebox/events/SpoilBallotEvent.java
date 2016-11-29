@@ -30,7 +30,8 @@ public class SpoilBallotEvent extends ABallotEvent {
 
                 byte[] ballot = list.get(3).toVerbatim();
 
-                return new SpoilBallotEvent(serial, nonce, bid, ballot);
+                String precinct = list.get(4).toString();
+                return new SpoilBallotEvent(serial, nonce, bid, ballot, precinct);
             }
 
             return null;
@@ -45,9 +46,10 @@ public class SpoilBallotEvent extends ABallotEvent {
      * @param bid the ballot to be spoiled
      * @param ballot the encrypted copy of the ballot being spoiled
      * @param nonce  the nonce of the ballot
+     *
      */
-    public SpoilBallotEvent(int serial, ASExpression nonce, String bid,  byte[] ballot) {
-        super(serial, nonce, bid, ballot);
+    public SpoilBallotEvent(int serial, ASExpression nonce, String bid,  byte[] ballot, String precinct) {
+        super(serial, nonce, ballot, bid, precinct);
     }
 
     /** @return the matcher rule */
@@ -67,7 +69,7 @@ public class SpoilBallotEvent extends ABallotEvent {
      */
     public ASExpression toSExp() {
         try {
-            return new ListExpression(StringExpression.makeString("spoil-ballot"), getNonce(), StringExpression.make(getBID()), ASExpression.makeVerbatim(getBallot()));
+            return new ListExpression(StringExpression.makeString("spoil-ballot"), getNonce(), StringExpression.make(getBID()), ASExpression.makeVerbatim(getBallot()), StringExpression.make(getPrecinct()));
         } catch (InvalidVerbatimStreamException e) {
             throw new RuntimeException(e);
         }
