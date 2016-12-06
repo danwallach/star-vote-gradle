@@ -16,7 +16,8 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 
     compile 'org.apache.pdfbox:pdfbox:1.8.6'
-    compile 'com.github.kenglxn.QRGen:javase:2.2.0'
+    compile 'com.google.zxing:core:3.2.1'
+    compile ("net.glxn:qrgen:1.4")
 }
 
 task runSupervisor(type: JavaExec) {
