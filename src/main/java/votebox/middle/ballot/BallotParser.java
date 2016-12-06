@@ -103,7 +103,7 @@ public class BallotParser {
         catch (TransformerException e) { throw new BallotParserException("Could not parse the ballot's XML file. This is most likely because your ballot XML is malformed.", e); }
 
         /* Validate the dom tree against our ballot schema. */
-        try { SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(vars.getBallotSchema()) .newValidator().validate(new DOMSource(document)); }
+        try { SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(vars.getBallotSchema()).newValidator().validate(new DOMSource(document)); }
         catch (SAXException e)  { throw new BallotParserException("Could not validate the ballot XML against the schema.", e); }
         catch (IOException e)   { throw new BallotParserException("Internal Error, Could not load the schema against which the ballot's XML should be validated.", e); }
 
