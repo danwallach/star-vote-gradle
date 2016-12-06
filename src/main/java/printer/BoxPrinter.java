@@ -11,6 +11,7 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import tap.BallotImageHelper;
+//import net.glxn.qrgen.QRCode;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
