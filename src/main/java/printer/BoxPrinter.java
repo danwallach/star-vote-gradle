@@ -11,7 +11,8 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import tap.BallotImageHelper;
-//import net.glxn.qrgen.QRCode;
+import net.glxn.qrgen.QRCode;
+import net.glxn.qrgen.image.ImageType;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -66,6 +67,22 @@ public class BoxPrinter {
       PDImageXObject ximage = JPEGFactory.createFromImage(document, barcode);
       contents.drawImage(ximage, 75, 705);
       contents.endMarkedContent();
+
+      // QR image
+
+      File qrFile = QRCode.from("localhost:9000/".concat(bid))
+          .to(ImageType.JPG)
+          .withSize(150, 150)
+          .file();
+      BufferedImage in = ImageIO.read(qrFile);
+
+      BufferedImage newImage = new BufferedImage(in.getWidth(), in.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+      Graphics2D g2 = newImage.createGraphics();
+      g2.drawImage(in, 0, 0, null);
+      g2.dispose();
+
+
 
       // OCR text
       contents.beginText();
