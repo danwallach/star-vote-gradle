@@ -344,6 +344,9 @@ public class VoteBox{
                     try {
                         PDDocument document = BoxPrinter.printCommittedBallot(ballotPage.getRaceSelections(),
                                 ballotPage.getBid(), races, _currentBallotFile);
+                        File file = new File("ballot_" + bid + ".pdf");
+                        document.save(file);
+
                         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                         document.save(byteArrayOutputStream);
                         document.close();
