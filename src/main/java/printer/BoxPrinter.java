@@ -68,22 +68,6 @@ public class BoxPrinter {
       contents.drawImage(ximage, 75, 705);
       contents.endMarkedContent();
 
-      // QR image
-
-      File qrFile = QRCode.from("localhost:9000/".concat(bid))
-          .to(ImageType.JPG)
-          .withSize(150, 150)
-          .file();
-      BufferedImage in = ImageIO.read(qrFile);
-
-      BufferedImage newImage = new BufferedImage(in.getWidth(), in.getHeight(), BufferedImage.TYPE_INT_ARGB);
-
-      Graphics2D g2 = newImage.createGraphics();
-      g2.drawImage(in, 0, 0, null);
-      g2.dispose();
-
-
-
       // OCR text
       contents.beginText();
       contents.setFont(ocrFont, 12);
@@ -244,6 +228,21 @@ public class BoxPrinter {
           right.remove(2);
         }
       }
+
+      // QR image
+      File qrFile = QRCode.from("localhost:9000/".concat(bid))
+              .to(ImageType.JPG)
+              .withSize(150, 150)
+              .file();
+      BufferedImage in = ImageIO.read(qrFile);
+
+      PDPage instructionPage = new PDPage();
+      document.addPage(instructionPage);
+      PDPageContentStream instructionContents = new PDPageContentStream(document, instructionPage);
+
+      //TODO: Add the actual instructions here
+
+      instructionContents.drawImage(JPEGFactory.createFromImage(document, in), 75, 705);
 
       contents.close();
     } catch (Exception e) {
