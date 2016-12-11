@@ -82,6 +82,12 @@ public class BoxPrinter {
       g2.drawImage(in, 0, 0, null);
       g2.dispose();
 
+      contents.beginText();
+      contents.setFont(font, 12);
+      contents.newLineAtOffset(350, 730);
+      contents.showText("Scan this QR code to view your ballot status");
+      contents.endText();
+
 
 
       // OCR text
