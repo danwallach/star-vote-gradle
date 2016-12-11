@@ -231,6 +231,10 @@ public class BoxPrinter {
 
       // QR image
       File qrFile = QRCode.from("localhost:9000/".concat(bid))
+
+          // uncommment the live below and comment out the line above when the website goes live
+
+      //File qrFile = QRCode.from("checkyourvote.com/".concat(bid))
               .to(ImageType.JPG)
               .withSize(150, 150)
               .file();
