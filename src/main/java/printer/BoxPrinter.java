@@ -68,28 +68,6 @@ public class BoxPrinter {
       contents.drawImage(ximage, 75, 705);
       contents.endMarkedContent();
 
-      // QR image
-
-      File qrFile = QRCode.from("localhost:9000/".concat(bid))
-          .to(ImageType.JPG)
-          .withSize(150, 150)
-          .file();
-      BufferedImage in = ImageIO.read(qrFile);
-
-      BufferedImage newImage = new BufferedImage(in.getWidth(), in.getHeight(), BufferedImage.TYPE_INT_ARGB);
-
-      Graphics2D g2 = newImage.createGraphics();
-      g2.drawImage(in, 0, 0, null);
-      g2.dispose();
-
-      contents.beginText();
-      contents.setFont(font, 12);
-      contents.newLineAtOffset(350, 730);
-      contents.showText("Scan this QR code to view your ballot status");
-      contents.endText();
-
-
-
       // OCR text
       contents.beginText();
       contents.setFont(ocrFont, 12);
@@ -250,6 +228,25 @@ public class BoxPrinter {
           right.remove(2);
         }
       }
+
+      // QR image
+      File qrFile = QRCode.from("localhost:9000/".concat(bid))
+
+          // uncommment the live below and comment out the line above when the website goes live
+
+      //File qrFile = QRCode.from("checkyourvote.com/".concat(bid))
+              .to(ImageType.JPG)
+              .withSize(150, 150)
+              .file();
+      BufferedImage in = ImageIO.read(qrFile);
+
+      PDPage instructionPage = new PDPage();
+      document.addPage(instructionPage);
+      PDPageContentStream instructionContents = new PDPageContentStream(document, instructionPage);
+
+      //TODO: Add the actual instructions here
+
+      instructionContents.drawImage(JPEGFactory.createFromImage(document, in), 75, 705);
 
       contents.close();
     } catch (Exception e) {
