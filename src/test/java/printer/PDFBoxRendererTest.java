@@ -1,5 +1,7 @@
 package printer;
 
+import net.glxn.qrgen.QRCode;
+import net.glxn.qrgen.image.ImageType;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -14,6 +16,7 @@ import org.junit.Test;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 
 import static org.junit.Assert.*;
@@ -165,8 +168,52 @@ public class PDFBoxRendererTest {
 //        contents.showText("###");
 //        contents.endText();
 //      }
+      // QR image
+      BufferedImage qrFile = ImageIO.read(
+              new ByteArrayInputStream(QRCode.from("localhost:9000/".concat("12345")).stream().toByteArray()));
+
+      PDPage instructionPage = new PDPage();
+      document.addPage(instructionPage);
+      PDPageContentStream instructionContents = new PDPageContentStream(document, instructionPage);
+
+      //TODO: Make this not ugly
+
+      instructionContents.beginText();
+      instructionContents.setFont(fontBold, 12);
+      instructionContents.newLineAtOffset(75, 630);
+      instructionContents.showText("KEEP THIS BALLOT TRACKER");
+      instructionContents.endText();
+
+      instructionContents.beginText();
+      instructionContents.setFont(font, 12);
+      instructionContents.newLineAtOffset(75, 615);
+      instructionContents.showText("To cast your ballot, place it in the ballot box.");
+      instructionContents.endText();
+
+      instructionContents.beginText();
+      instructionContents.setFont(font, 12);
+      instructionContents.newLineAtOffset(75, 600);
+      instructionContents.showText("Keep this ballot tracker in case you want to check on your ballot after the polls close.");
+      instructionContents.endText();
+
+      instructionContents.beginText();
+      instructionContents.setFont(font, 12);
+      instructionContents.newLineAtOffset(75, 575);
+      instructionContents.showText("You can check your vote by going to checkmyvote.com and entering your ballot ID");
+      instructionContents.endText();
+
+      instructionContents.beginText();
+      instructionContents.setFont(font, 12);
+      instructionContents.newLineAtOffset(75, 560);
+      instructionContents.showText("or scanning the QR code printed above.");
+      instructionContents.endText();
+
+      instructionContents.beginMarkedContent(COSName.IMAGE);
+      instructionContents.drawImage(JPEGFactory.createFromImage(document, qrFile), 75, 650);
+      instructionContents.endMarkedContent();
 
       contents.close();
+      instructionContents.close();
 
       document.save(file);
     } catch (Exception e) {
