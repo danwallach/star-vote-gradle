@@ -214,6 +214,7 @@ public class ASEConverter {
 
         /* Get the list of fields */
         Field[] fields = curClass.getDeclaredFields();
+        Arrays.sort(fields, Comparator.comparing(Field::getName));
 
         /* Concatenate those fields in the direct superclass */
         fields = Stream.concat(Arrays.stream(fields), Arrays.stream(curClass.getSuperclass().getDeclaredFields())).toArray(Field[]::new);
