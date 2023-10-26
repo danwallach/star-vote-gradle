@@ -64,9 +64,9 @@ public class ASEConverterTest extends TestCase{
     public void testToASE(){
 
         String expected = "(object java.util.LinkedHashMap (object sexpression.KeyValuePair (key java.lang.String Matt B) " +
-                "(value java.lang.Integer 1)) (object sexpression.KeyValuePair (key java.lang.String Matt K) " +
-                "(value java.lang.Integer 0)) (object sexpression.KeyValuePair (key java.lang.String Clayton) " +
-                "(value java.lang.Integer 0)))";
+                          "(value java.lang.Integer 1)) (object sexpression.KeyValuePair (key java.lang.String Matt K) " +
+                          "(value java.lang.Integer 0)) (object sexpression.KeyValuePair (key java.lang.String Clayton) " +
+                          "(value java.lang.Integer 0)))";
 
 
         ListExpression rsExp = ASEConverter.convertToASE(rsMap);
@@ -96,16 +96,18 @@ public class ASEConverterTest extends TestCase{
         assertTrue(prsString.contains("(object crypto.PlaintextRaceSelection (voteMap java.util.LinkedHashMap (object sexpression.KeyValuePair " +
                 "(key java.lang.String Matt B) (value java.lang.Integer 1)) (object sexpression.KeyValuePair " +
                 "(key java.lang.String Matt K) (value java.lang.Integer 0)) (object sexpression.KeyValuePair " +
-                "(key java.lang.String Clayton) (value java.lang.Integer 0)))") && prsString.contains("(title java.lang.String myRaceSelection)") && prsString.contains("(size java.lang.Integer 1)"));
+                "(key java.lang.String Clayton) (value java.lang.Integer 0)))") && 
+                prsString.contains("(title java.lang.String myRaceSelection)") && 
+                prsString.contains("(size java.lang.Integer 1)"));
 
         System.out.println("Expected: " + expected);
         System.out.println("Returned: " + prs + "\n");
 
         expected = "(object java.util.LinkedHashMap (object sexpression.KeyValuePair (key NULL) (value java.lang.Integer 0)) " +
-                "(object sexpression.KeyValuePair (key java.lang.String Dan) (value NULL)) " +
-                "(object sexpression.KeyValuePair (key java.lang.String Matt B) (value java.lang.Integer 1)) " +
-                "(object sexpression.KeyValuePair (key java.lang.String Matt K) (value java.lang.Integer 0)) " +
-                "(object sexpression.KeyValuePair (key java.lang.String Clayton) (value java.lang.Integer 0)))";
+                   "(object sexpression.KeyValuePair (key java.lang.String Dan) (value NULL)) " +
+                   "(object sexpression.KeyValuePair (key java.lang.String Matt B) (value java.lang.Integer 1)) " +
+                   "(object sexpression.KeyValuePair (key java.lang.String Matt K) (value java.lang.Integer 0)) " +
+                   "(object sexpression.KeyValuePair (key java.lang.String Clayton) (value java.lang.Integer 0)))";
 
         rsMap.put(null, 0);
         rsMap.put("Dan",null);
@@ -116,13 +118,15 @@ public class ASEConverterTest extends TestCase{
         System.out.println("Returned: " + rsExp + "\n");
 
         expected = "(object crypto.PlaintextRaceSelection (voteMap NULL) (title java.lang.String myNewRaceSelection) " +
-                "(size java.lang.Integer 1))";
+                   "(size java.lang.Integer 1))";
 
         prs = ASEConverter.convertToASE(pNew);
 
         prsString = prs.toString();
 
-        assertTrue(prsString.contains("(object crypto.PlaintextRaceSelection (voteMap NULL)") && prsString.contains("(title java.lang.String myNewRaceSelection)") && prsString.contains("(size java.lang.Integer 1)"));
+        assertTrue(prsString.contains("(object crypto.PlaintextRaceSelection (voteMap NULL)") && 
+                   prsString.contains("(title java.lang.String myNewRaceSelection)") && 
+                   prsString.contains("(size java.lang.Integer 1)"));
 
         System.out.println("Expected: " + expected);
         System.out.println("Returned: " + prs + "\n");
